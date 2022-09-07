@@ -5,6 +5,9 @@
 后台管理页
 ![image-20220907113253202](https://img.chenbz.com/image-20220907113253202.png)
 
+## # 预览地址
+[🚀 点击访问预览地址](https://chenbz777.github.io/vue3_admin_base/)
+
 ## # 功能
 
 1. axios封装
