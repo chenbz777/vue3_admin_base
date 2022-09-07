@@ -5,9 +5,6 @@
 后台管理页
 ![image-20220907113253202](https://img.chenbz.com/image-20220907113253202.png)
 
-登录页
-![image-20220907113227713](https://img.chenbz.com/image-20220907113227713.png)
-
 ## # 功能
 
 1. axios封装
