@@ -14,7 +14,7 @@ const form = reactive({
   formModels: [
     {
       label: '账户',
-      key: 'user',
+      key: 'username',
       type: 'input',
       rule: true,
     },
