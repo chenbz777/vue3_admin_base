@@ -22,7 +22,7 @@ const getHtml = () => {
 </script>
 
 <template>
-  <MdEditor :text="text" ref="markdown"></MdEditor>
+  <MdEditor v-model="text" ref="markdown"></MdEditor>
 
   <div class="mt-3">
     <el-button type="primary" @click="getMarkdown">getMarkdown</el-button>
@@ -31,4 +31,5 @@ const getHtml = () => {
 </template>
 
 <style scoped>
+
 </style>

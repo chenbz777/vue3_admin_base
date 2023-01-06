@@ -4,6 +4,7 @@ import type { FormInstance, FormRules } from 'element-plus';
 import { Key, Plus } from '@element-plus/icons-vue';
 
 import Tag from './Tag.vue';
+import MdEditor from './MdEditor.vue';
 
 // 【接口】通用设置key
 interface IKey {
@@ -41,21 +42,38 @@ const props = withDefaults(defineProps<IProps>(), {
 // 获取“占位符”
 const getPlaceholder = (type: string, label: string): string => {
 
-  if (type === ('input' || 'number' || 'tag')) {
-    return '请输入' + label;
+  let result = '请选择';
+
+  switch (type) {
+    case 'input':
+      result = '请输入';
+      break;
+    case 'number':
+      result = '请输入';
+      break;
+    case 'tag':
+      result = '请输入';
+      break;
+    case 'mdEditor':
+      result = '请输入';
+      break;
+    case 'upload':
+      result = '请上传';
+      break;
   }
 
-  if (type === 'upload') {
-    return '请上传' + label;
-  }
-
-  return '请选择' + label;
+  return result + label;
 };
 
 // form表单校验规则
 const rules = reactive<FormRules>({});
 
 props.formModels.forEach(formModel => {
+
+  if ((formModel.type === 'upload') || (formModel.type === 'upload-mini')) {
+
+    props.ruleForm[formModel.key] = props.ruleForm[formModel.key] || []
+  }
 
   if (!formModel.placeholder) {
     formModel.placeholder = getPlaceholder(formModel.type, formModel.label);
@@ -82,7 +100,28 @@ const slots = useSlots();
 const ruleFormRef = ref<FormInstance>();
 
 // 校验
-const validate = () => {
+const isValidateError = ref(false);
+
+const validate = async () => {
+
+  // 添加校验不通过友好提示
+  try {
+    await ruleFormRef.value?.validate();
+
+    emit('validateForm', true);
+  } catch (e: any) {
+
+    isValidateError.value = true;
+
+    const timerId = setTimeout(() => {
+      isValidateError.value = false;
+
+      clearTimeout(timerId)
+    }, 1000);
+
+    emit('validateForm', false);
+  }
+
   return ruleFormRef.value?.validate();
 };
 
@@ -99,6 +138,7 @@ const resetForm = (): void => {
 // 事件
 const emit = defineEmits<{
   (e: "submitForm", ruleForm: IKey): void;
+  (e: "validateForm", validateResult: boolean): boolean;
 }>();
 
 // 提交表单
@@ -224,7 +264,7 @@ const handlePictureCardPreview = (uploadFile: any) => {
       <el-upload v-else-if="formModel.type === 'upload'" v-model:file-list="props.ruleForm[formModel.key]"
         :action="formModel?.props?.action" :limit="formModel?.props?.limit || 1" list-type="picture-card"
         :on-preview="handlePictureCardPreview" :disabled="formModel.disabled"
-        :class="{'el-upload--none': props.ruleForm[formModel.key].length === formModel?.props?.limit}">
+        :class="{ 'el-upload--none': props.ruleForm[formModel.key].length === formModel?.props?.limit }">
         <el-icon>
           <Plus />
         </el-icon>
@@ -233,20 +273,24 @@ const handlePictureCardPreview = (uploadFile: any) => {
       <el-upload v-else-if="formModel.type === 'upload-mini'" v-model:file-list="props.ruleForm[formModel.key]"
         :action="formModel?.props?.action" :limit="formModel?.props?.limit || 1" list-type="picture-card"
         :on-preview="handlePictureCardPreview" :disabled="formModel.disabled" class="upload-mini"
-        :class="{'el-upload--none': props.ruleForm[formModel.key].length === formModel?.props?.limit}">
+        :class="{ 'el-upload--none': props.ruleForm[formModel.key].length === formModel?.props?.limit }">
         <el-icon>
           <Plus />
         </el-icon>
       </el-upload>
       <!-- tag -->
       <Tag v-else-if="formModel.type === 'tag'" v-model:bindModel="props.ruleForm[formModel.key]"></Tag>
+      <!-- md -->
+      <MdEditor v-else-if="formModel.type === 'mdEditor'" v-model="props.ruleForm[formModel.key]" :id="formModel.key">
+      </MdEditor>
     </el-form-item>
     <el-form-item class="form-operations">
       <!-- 预留自定义区域 -->
       <slot name="operations"></slot>
 
       <!-- 默认【提交】按钮和【重置】按钮 -->
-      <el-button type="primary" @click="submitForm" v-if="showSubmitBtn">{{ submitText }}</el-button>
+      <el-button type="primary" @click="submitForm" v-if="showSubmitBtn"
+        :class="{ 'animate__base animate__animated animate__wobble': isValidateError }">{{ submitText }}</el-button>
       <el-button @click="resetForm" v-if="showResetBtn">重置</el-button>
     </el-form-item>
 
@@ -277,5 +321,54 @@ const handlePictureCardPreview = (uploadFile: any) => {
 
 :deep(.el-form-item .el-form-item) {
   margin-bottom: 18px;
+}
+
+
+.animate__base {
+  animation-delay: 0.3s;
+}
+
+.animate__wobble {
+  -webkit-animation-name: wobble;
+  animation-name: wobble;
+}
+
+.animate__animated {
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+@keyframes wobble {
+  0% {
+    transform: translateX(0%);
+  }
+
+  15% {
+    transform: translateX(-25%) rotate(-5deg);
+  }
+
+  30% {
+    transform: translateX(20%) rotate(3deg);
+  }
+
+  45% {
+    transform: translateX(-15%) rotate(-3deg);
+  }
+
+  60% {
+    transform: translateX(10%) rotate(2deg);
+  }
+
+  75% {
+    transform: translateX(-5%) rotate(-1deg);
+  }
+
+  100% {
+    transform: translateX(0%);
+  }
 }
 </style>

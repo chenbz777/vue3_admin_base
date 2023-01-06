@@ -71,4 +71,5 @@ const handleDelete = (data: any) => {
 </template>
 
 <style scoped>
+
 </style>

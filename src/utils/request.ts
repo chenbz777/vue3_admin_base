@@ -79,22 +79,13 @@ const baseRequest = ({ url, method, data }: IBaseRequest) => {
       url,
       method,
       data,
-      params
+      params,
     })
       .then(response => {
-        // 关闭 loading
-        loading.close();
 
         const res: IRes = response.data;
 
         if (res.code === 200) {
-
-          if (method !== 'get') {
-            ElMessage({
-              message: res.msg,
-              type: 'success',
-            });
-          };
 
           resolve(res.data);
         } else {
@@ -107,12 +98,16 @@ const baseRequest = ({ url, method, data }: IBaseRequest) => {
         }
       })
       .catch((error) => {
+
+        const err = error.response.data || error.response
+
+        console.log('error', err);
+
+        reject(err);
+      })
+      .finally(() => {
         // 关闭 loading
         loading.close();
-
-        console.log('error');
-
-        console.log(error.response.data);
       });
   });
 };

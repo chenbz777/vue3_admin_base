@@ -8,13 +8,14 @@ const form = reactive({
       key: 'input',
       type: 'input',
       rule: true,
+      disabled: false,
     },
     {
       label: '下拉选择',
       key: 'select',
       type: 'select',
+      rule: true,
       value: 1,
-      disabled: false,
       options: [
         {
           key: 1,
@@ -113,23 +114,33 @@ const form = reactive({
       label: '图片上传',
       key: 'images',
       type: 'upload',
-      rule: true,
       props: {
         action: '上传图片接口',
         limit: 1,
       }
     },
+    {
+      label: 'mdEditor',
+      key: 'mdEditor',
+      type: 'mdEditor',
+      rule: true,
+      props: {}
+    },
   ],
   ruleForm: {
-    images: [],
   }
 });
+
+const submitForm = (data: any) => {
+  console.log('submitForm', data);
+}
 
 </script>
 
 <template>
-  <Form :formModels="form.formModels" :ruleForm="form.ruleForm"></Form>
+  <Form :formModels="form.formModels" :ruleForm="form.ruleForm" @submitForm="submitForm"></Form>
 </template>
 
 <style scoped>
+
 </style>

@@ -54,9 +54,11 @@ const handleDelete = (data: object) => {
       <div class="flex-1 c-row-y-center">
         <div class="flex-1">{{ node.label }}</div>
         <div>
-          <el-button link type="primary" :icon="Edit" @click.stop="handleEdit(data)" v-if="showEditBtn">编辑
+          <el-button link type="primary" :icon="Edit" @click.stop="handleEdit(data)"
+            v-if="data.showEditBtn ?? showEditBtn">编辑
           </el-button>
-          <el-button link type="danger" :icon="Delete" @click.stop="handleDelete(data)" v-if="showDeleteBtn">删除
+          <el-button link type="danger" :icon="Delete" @click.stop="handleDelete(data)"
+            v-if="data.showDeleteBtn ?? showDeleteBtn">删除
           </el-button>
         </div>
       </div>

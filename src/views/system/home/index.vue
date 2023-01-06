@@ -10,4 +10,5 @@ import { ref, reactive, inject } from "vue";
 </template>
 
 <style scoped>
+
 </style>
